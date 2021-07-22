@@ -1,0 +1,17 @@
+{
+  "name": "quattie-server",
+  "version": "1.0.0",
+  "description": "server for quattie online wallet application",
+  "main": "server.js",
+  "scripts": {
+    "startDev": "nodemon server.js"
+  },
+  "author": "Dominic Chang, Travis Smith",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
