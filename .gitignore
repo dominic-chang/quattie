@@ -1,0 +1,3 @@
+.vscode
+./quattie-client/node_modules
+./*/node_modules
