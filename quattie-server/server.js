@@ -1,8 +1,49 @@
-const express = require("express")
+const express = require("express");
+const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken')
 const app = express()
-const port = 3000
-
+const port = 8080
 app.use(express.json())
+
+// headers for CORS
+const corsHeaders = {
+    'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+    "Access-Control-Max-Age": 2592000
+}
+
+function authenticateToken(req, res, next) {//middleware for authenticating token
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    console.log(err)
+
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+
+    next()
+  })
+}
+
+// get config vars
+dotenv.config()
+
+// access config var
+process.env.TOKEN_SECRET
+
+function generateAccessToken(username) {
+    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' })
+}
+
+app.use(function(req, res, next){
+    res.header(corsHeaders)
+    next()
+})
 
 // default resource
 app.get('/', (req, res) => {
@@ -11,9 +52,10 @@ app.get('/', (req, res) => {
 
 const users = {}//{'a':{amount: 100, pending_requests: [], history: []},'b': {amount: 100, pending_requests: [], history: []}};
 
-app.get('/login', (req, res) =>{
-
-    
+app.post('/login', (req, res) =>{
+    console.log(`Login request from user: ${req.body.username}`)
+    const token = generateAccessToken({ username: req.body.username });
+    res.json(token)    
 })
 
 app.post('/deposit', (req, res) => {    
@@ -63,7 +105,7 @@ app.get('/wallet', (req, res) => {
 })
 
 
-app.post('/transact', (req, res) => {
+app.post('/transact', authenticateToken, (req, res) => {
     /*
         request or send money from a sender to a recipient
     */

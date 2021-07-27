@@ -7,7 +7,6 @@ export default function Login({ onSubmit }){
 
   function handleSubmit(e) {
     e.preventDefault()
-
     onSubmit( userRef.current.value, passRef.current.value )
   }
 
