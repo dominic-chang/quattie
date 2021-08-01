@@ -60,15 +60,16 @@ app.post('/signup', (req, res) => {
     if (users[username] == null){
         // addd new user
         users[username] = { password: password, balance: initial_deposit, pending_requests: [], history: [{username:0, amount: parseFloat(initial_deposit), trans_type: 'send'}]}
+        console.log("New user added")
         res.send({ message: `New user added. Your username is ${username}, and your balance is ${initial_deposit}`})
     } else {
+        console.log("User already exists")
         res.send({message: 'User already exists'})
     }
 })
 
 app.post('/login', (req, res) =>{
     console.log(`Login request from user: ${req.body.username}`)
-    console.log(users)
     const { username, password } = req.body
     if (users[username] == null){
         res.send({message: "user does not exist"})
