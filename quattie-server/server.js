@@ -33,29 +33,55 @@ function authenticateToken(req, res, next) {//middleware for authenticating toke
 // get config vars
 dotenv.config()
 
-// access config var
-process.env.TOKEN_SECRET
-
 function generateAccessToken(username) {
     return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' })
 }
 
-app.use(function(req, res, next){
+app.use(function(req, res, next){// Middleware for handling CORS
     res.header(corsHeaders)
     next()
 })
+
+
+var users = {}
 
 // default resource
 app.get('/', (req, res) => {
     res.send('Welcome to Quattie!')
 })
 
-const users = {}//{'a':{amount: 100, pending_requests: [], history: []},'b': {amount: 100, pending_requests: [], history: []}};
+app.post('/signup', (req, res) => {
+    /*
+        Sign up for a new account
+    */
+
+    const { username, password, initial_deposit } = req.body
+
+    if (users[username] == null){
+        // addd new user
+        users[username] = { password: password, balance: initial_deposit, pending_requests: [], history: [{username:0, amount: parseFloat(initial_deposit), trans_type: 'send'}]}
+        res.send({ message: `New user added. Your username is ${username}, and your balance is ${initial_deposit}`})
+    } else {
+        res.send({message: 'User already exists'})
+    }
+})
 
 app.post('/login', (req, res) =>{
     console.log(`Login request from user: ${req.body.username}`)
-    const token = generateAccessToken({ username: req.body.username });
-    res.json(token)    
+    console.log(users)
+    const { username, password } = req.body
+    if (users[username] == null){
+        res.send({message: "user does not exist"})
+    } else {
+        user = users[username]
+        if(user.password !== password) {
+            res.send({message: "incorrect password"})
+        } else {
+            const token = generateAccessToken({ username: req.body.username });
+            res.json(token)    
+
+        }
+    }
 })
 
 app.post('/deposit', (req, res) => {    
@@ -72,34 +98,18 @@ app.post('/withdraw', (req, res) => {
 })
 
 
-app.post('/signup', (req, res) => {
-    /*
-        Sign up for a new account
-    */
-
-    const { id, initial_deposit } = req.body
-
-    if (users[id] == null){
-        // addd new user
-        users[id] = { balance: initial_deposit, pending_requests: [], history: [{id:0, amount: parseFloat(initial_deposit), trans_type: 'send'}]}
-        res.send({ message: `New user added. Your ID is ${id}, and your balance is ${initial_deposit}`})
-    } else {
-        res.send({message: 'User already exists'})
-    }
-
-})
-app.get('/wallet', (req, res) => {
+app.get('/wallet', authenticateToken, (req, res) => {
     /*
         get current wallet balance
     */
 
-    const { id } = req.body
+    const { username } = req.body
 
 
-    if (users[id] == null){ 
+    if (users[username] == null){ 
         res.send({ message: 'sender does not exist' })
     } else {
-        res.send({ message: `Your current balance is: ${users[id]['balance']}`})
+        res.send({ message: `Your current balance is: ${users[username]['balance']}`})
     }
 
 })
@@ -107,46 +117,41 @@ app.get('/wallet', (req, res) => {
 
 app.post('/transact', authenticateToken, (req, res) => {
     /*
-        request or send money from a sender to a recipient
+        request or send money from a sender to a user
     */
     //transaction object
-    const {recipient, sender, amount, trans_type } = req.body
+    const {taker_name, amount, trans_type } = req.body
+    const maker_name = req.user.username
+    const maker = users[maker_name] // makes request
+    const taker = users[taker_name] //takes request
 
-    const send_user = users[sender]
-    const rec_user = users[recipient]
-
-    if (send_user == null) {
-        console.log('bad sender')
-        res.send({ message: 'sender does not exist'})
-    }
-    if (rec_user == null) {
-        console.log('bad recipient')
-        res.send({ message: 'recipient does not exist'})
+    if (taker == null) {
+        console.log('user does not exist')
+        res.send({ message: 'user does not exist'})
     }
 
     if (trans_type === 'send'){
     //check to see if transaction amount is <= sender balance
     console.log('send request')
-        if (send_user.balance < amount) {
+        if (maker.balance < amount) {
             res.send({
-                message: `${sender} does not have enough balance to conduct this transaction` 
+                message: `${maker_name} does not have enough balance to conduct this transaction` 
                 })
         } else {
-            send_user['balance'] -= amount
-            rec_user['balance'] += amount
+            maker['balance'] -= amount
+            taker['balance'] += amount
             
             //update transaction history
-            send_user['history'].push({recipient, amount, trans_type })
-            rec_user['history'].push({sender, amount, trans_type })
+            maker['history'].push({taker_name, amount, trans_type })
+            taker['history'].push({maker_name, amount, trans_type })
 
             res.send({
-                message: `${amount} was sent to ${recipient}`
+                message: `${amount} was sent to ${taker_name}`
             })
         }
     } else if (trans_type === 'request'){
-        //swap the sender and recipient and put in pending transaction for later confirmation
-        rec_user['pending_requests'].push({ sender, amount, trans_type })
-        res.send({message: `we have requested a payment of ${amount} from ${recipient}`})
+        taker['pending_requests'].push({ sender, amount, trans_type })
+        res.send({message: `we have requested a payment of ${amount} from ${take_name}`})
     } else {
         res.send({message: 'Transaction type not recognized'})
     }
