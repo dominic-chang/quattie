@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef } from 'react'
 import { Form, Container, Button } from 'react-bootstrap'
+const fetch = require('node-fetch')
 
 export default function Login({onSubmit}){
   const userRef = useRef()
@@ -15,7 +16,7 @@ export default function Login({onSubmit}){
     let url = 'http://localhost:8080/login' 
     let options = {
       method: 'POST',
-      mode: 'cors',
+      //mode: 'cors',
       headers:{
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(data)
@@ -23,10 +24,11 @@ export default function Login({onSubmit}){
       body: data
     }
 
-    fetch(url, options).then(res => res.json())
+    fetch(url, options).then((res) => { return res.json() })
     .then(
       json => { 
-        document.cookie=`token=${json}`;
+        //document.cookie=`token=${json}`;
+        if(json.message == null){ onSubmit(json) }
         console.log(json);
       }
     )
@@ -51,18 +53,11 @@ export default function Login({onSubmit}){
       body: data
     }
 
-    fetch(url, options).then(res => res.json())
-    .then(
-      json => { 
-        document.cookie=`token=${json}`;
-        console.log(json);
-      }
-    )
+    fetch(url, options)
   }
 
   function handleSubmit(e) {
     e.preventDefault()
-    onSubmit()
   }
 
   return(
@@ -76,10 +71,10 @@ export default function Login({onSubmit}){
           <Form.Label>Password</Form.Label>
           <Form.Control type="text" ref={passRef} placeholder="password" required/>
         </Form.Group>
-        <Button type="submit" onClick={() => {onLogin(userRef.current.value, passRef.current.value)}}>
+        <Button type="submit" onClick={() => {console.log("login"); onLogin(userRef.current.value, passRef.current.value)}}>
           Login
         </Button>
-        <Button type="submit" onClick={() => {onSignup(userRef.current.value, passRef.current.value,100)}}>
+        <Button type="submit" onClick={() => {console.log("signed up");onSignup(userRef.current.value, passRef.current.value)}}>
           Signup 
         </Button>
       </Form>

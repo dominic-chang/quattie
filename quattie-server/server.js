@@ -1,22 +1,27 @@
 const express = require("express");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken')
+const cors = require('cors')
 const app = express()
 const port = 8080
 app.use(express.json())
 
 // headers for CORS
 const corsHeaders = {
-    'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
+    'Access-Control-Allow-Headers': "Origin,X-Requested-With,Content-Type,Accept,Authorization",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,OPTIONS",
     "Access-Control-Max-Age": 2592000
+}
+
+
+function generateAccessToken(username) {
+    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' })
 }
 
 function authenticateToken(req, res, next) {//middleware for authenticating token
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
-
   if (token == null) return res.sendStatus(401)
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
@@ -33,15 +38,17 @@ function authenticateToken(req, res, next) {//middleware for authenticating toke
 // get config vars
 dotenv.config()
 
-function generateAccessToken(username) {
-    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' })
-}
+
 
 app.use(function(req, res, next){// Middleware for handling CORS
     res.header(corsHeaders)
     next()
 })
 
+app.options('/*', (req, res) => {
+    console.log("options request")
+    res.send(200)
+})
 
 var users = {}
 
@@ -80,7 +87,7 @@ app.post('/login', (req, res) =>{
         } else {
             const token = generateAccessToken({ username: req.body.username });
             res.json(token)    
-
+            console.log(token)
         }
     }
 })
@@ -99,18 +106,21 @@ app.post('/withdraw', (req, res) => {
 })
 
 
+
 app.get('/wallet', authenticateToken, (req, res) => {
     /*
         get current wallet balance
     */
 
-    const { username } = req.body
-
+    const { username } = req.user
+    console.log(`wallet balance request from user: ${username}`)
 
     if (users[username] == null){ 
         res.send({ message: 'sender does not exist' })
     } else {
-        res.send({ message: `Your current balance is: ${users[username]['balance']}`})
+        let balance = users[username]['balance']
+        console.log(`Your current balance is: ${balance}`)
+        res.json({balance: balance})
     }
 
 })
