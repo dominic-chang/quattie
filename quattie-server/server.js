@@ -114,13 +114,14 @@ app.get('/wallet', authenticateToken, (req, res) => {
 
     const { username } = req.user
     console.log(`wallet balance request from user: ${username}`)
-
+    let current_user = users[username]
     if (users[username] == null){ 
         res.send({ message: 'sender does not exist' })
     } else {
-        let balance = users[username]['balance']
+        let pending_requests = current_user['pending_requests']
+        let balance = current_user['balance']
         console.log(`Your current balance is: ${balance}`)
-        res.json({balance: balance})
+        res.json({username: username, balance: balance, pending: pending_requests})
     }
 
 })

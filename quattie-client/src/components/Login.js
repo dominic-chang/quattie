@@ -1,6 +1,7 @@
-import React, { useRef } from 'react'
-import { Form, Container, Button } from 'react-bootstrap'
-const fetch = require('node-fetch')
+import React, { useRef } from 'react';
+import { Form, Container, Button } from 'react-bootstrap';
+const fetch = require('node-fetch');
+
 
 export default function Login({onSubmit}){
   const userRef = useRef()

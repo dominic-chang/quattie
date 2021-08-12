@@ -1,31 +1,16 @@
-import React, { useState }from 'react'
-import { Container } from 'react-bootstrap'
-const fetch = require('node-fetch')
+import { Container, Badge } from 'react-bootstrap'
 
-export default function Wallet({jwt}) {
+export default function Wallet({user}) {
 
-  const [ balance, setBalance ] = useState()
-
-  function getBalance(jwt) {
-    const url = 'http://localhost:8080/wallet' 
-    const bearer = `Bearer ${jwt}`
-
-    const options = {
-      method: 'GET',
-      mode: 'cors',
-      headers:{
-        'authorization': bearer,
-        'Content-Type': 'application/json'
-      },
-    }
-
-    fetch(url, options).then((res) => { return res.json() })
-    .then((json) => {setBalance(json['balance'])})
-  }
-  getBalance(jwt)
+  const { balance, username, pending_requests } = user
   return (
     <Container>
-      {balance}
+      <h1>
+        {`Welcome ${username}`}
+      </h1>
+      <Badge bg="secondary">
+        {`$${balance}`}
+      </Badge>
     </Container>
   )
 }
