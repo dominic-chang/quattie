@@ -49,11 +49,14 @@ function App() {
     <Router>
       <Navbar/>
       <Switch>
-        <Route path="/wallet">        
-          <Wallet user={user} />
+        <Route path="/wallet">
+          <Wallet user={user}/>
         </Route>
         <Route path="/transact">
-          <Transact user={user} jwt={jwt}/>
+          <Transact user={user} jwt={jwt} onSubmit={getUserInfo}/>
+        </Route>
+        <Route path="/">
+          <Wallet user={user}/>
         </Route>
       </Switch>
     </Router>
@@ -66,9 +69,10 @@ function App() {
     }
     return(<Login onSubmit={setJwt}/>)
   } else {
-  return (
+    console.log(user)
+    return (
       temp
-  );
+    );
   }
 }
 

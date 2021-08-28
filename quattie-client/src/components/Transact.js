@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Form, Container, Button } from 'react-bootstrap';
 
 
-export default function Transact({user, jwt}) {
+export default function Transact({user, jwt, onSubmit}) {
   const userRef = useRef()
   const amountRef = useRef()
 
@@ -52,8 +52,8 @@ function requestMoney(jwt) {
           </Form.Label>
           <Form.Control type="text" ref={amountRef}/>
         </Form.Group>
-        <Button onClick={()=>sendMoney(jwt)}>Send</Button>
-        <Button>onClick={()=>requestMoney(jwt)}>Request</Button>
+        <Button onClick={()=>{sendMoney(jwt);onSubmit(jwt)}}>Send</Button>
+        <Button onClick={()=>{requestMoney(jwt);onSubmit(jwt)}}>Request</Button>
       </Form>
     </Container>
   )
