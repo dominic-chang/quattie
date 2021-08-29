@@ -2,7 +2,7 @@ import { Container, Badge } from 'react-bootstrap'
 
 export default function Wallet({user}) {
 
-  const { balance, username, pending_requests } = user
+  const { balance, username } = user
   return (
     <Container>
       <h1>

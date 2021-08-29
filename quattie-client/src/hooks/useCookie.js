@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 
 const PREFIX = 'quattie'
 
-export default function useLocalStorate(key, initialValue) {
-    const prefixedKey = PREFIX + key
+export default function useCookie(key, initialValue) {
+    const prefixedKey = PREFIX + "-" + key
     const [value, setValue] = useState(() => {
-        const jsonValue = localStorage.getItem(prefixedKey)
-        if (jsonValue != null) return JSON.parse(jsonValue) //Set state from local storage
-
+        const cookies = JSON.parse(`{"${document.cookie.split(" ").join("").split(";").map(el => el.split("=").join('":"')).join('","')}"}`)
+        //const jwtValue = localStorage.getItem(prefixedKey)
+        const jwtValue = cookies['jwt']
+        console.log("cookie "+jwtValue)
+        if (jwtValue != null) return jwtValue //Set state from local storage
         if (typeof initialValue === 'function') {// execute initialValue if function
             return initialValue()
         } else {
@@ -15,9 +17,12 @@ export default function useLocalStorate(key, initialValue) {
         }
     })
 
+
     useEffect(() => {// Update local storage if the prefixed key or value(state) is changed
-        localStorage.setItem(prefixedKey, JSON.stringify)
+        document.cookie = `${key}=${value}`
+        localStorage.setItem(prefixedKey, value)
     }, [prefixedKey, value])
+
 
     return[value, setValue] //return the state and setter
 }

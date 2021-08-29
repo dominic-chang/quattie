@@ -1,6 +1,7 @@
 import Login from './Login.js';
 import Wallet from './Wallet.js';
 import Transact from './Transact.js';
+import useCookie from '../hooks/useCookie.js';
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import {
@@ -14,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   const domain = 'localhost:3000' 
 
-  const [ jwt, setJwt ] = useState()
+  const [ jwt, setJwt ] = useCookie('jwt')
   const [ user, setUser ] = useState({})
 
   useEffect(()=>{
@@ -40,7 +41,6 @@ function App() {
 
     fetch(url, options).then((res) => { return res.json() })
     .then((json) => {
-      console.log(json);
       setUser(json);
     })
   }
@@ -61,6 +61,7 @@ function App() {
       </Switch>
     </Router>
   )
+
   if (jwt == null){
     console.log(window.location.href !== domain)
     if (window.location.href !== domain){
@@ -69,7 +70,7 @@ function App() {
     }
     return(<Login onSubmit={setJwt}/>)
   } else {
-    console.log(user)
+    console.log("jwt: " + jwt)
     return (
       temp
     );

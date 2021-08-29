@@ -28,7 +28,7 @@ export default function Login({onSubmit}){
     fetch(url, options).then((res) => { return res.json() })
     .then(
       json => { 
-        //document.cookie=`token=${json}`;
+        document.cookie=`token=${json}`;
         if(json.message == null){ onSubmit(json) }
         console.log(json);
       }
