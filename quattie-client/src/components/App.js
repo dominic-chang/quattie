@@ -26,6 +26,18 @@ function App() {
     Check to see if token is valid
     If valid, render the dashboad else go to login page
   */
+  function checkStatus(res) {
+    if ( res.ok )  {
+      return res
+    } else {
+      if( res.statusText == "Forbidden"){
+        console.log("Access is forbidden")
+        setJwt()
+      }
+      return res
+    }
+  }
+
  
   function getUserInfo(jwt) {
     const url = "http://localhost:8080/wallet"
@@ -39,8 +51,10 @@ function App() {
       },
     }
 
-    fetch(url, options).then((res) => { return res.json() })
+    fetch(url, options).then(checkStatus)
+    .then((res) => { return res.json() })
     .then((json) => {
+      console.log(JSON.stringify(json));
       setUser(json);
     })
   }
