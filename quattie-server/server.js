@@ -1,7 +1,6 @@
 const express = require("express");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken')
-const cors = require('cors')
 const app = express()
 const port = 8080
 app.use(express.json())
@@ -16,7 +15,7 @@ const corsHeaders = {
 
 
 function generateAccessToken(username) {
-    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' })
+    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1s' })// Generate JWT that logs out after 1 hr
 }
 
 function authenticateToken(req, res, next) {//middleware for authenticating token
@@ -124,6 +123,21 @@ app.get('/wallet', authenticateToken, (req, res) => {
         res.json({username: username, balance: balance, pending: pending_requests})
     }
 
+})
+
+app.get('/history', authenticateToken, (req, res) => {
+    /* 
+        get user history
+    */
+
+    const { username } = req.user
+    console.log(`History request for user ${usernaem}`)
+    let current_user = users[username]
+    if (users[username] == null){ 
+        res.send({ message: 'sender does not exist' })
+    } else {
+        res.json({history: history})
+    }
 })
 
 

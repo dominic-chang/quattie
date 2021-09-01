@@ -39,7 +39,7 @@ export default function Login({onSubmit}){
     const data = JSON.stringify({
       username: username,
       password: password,
-      initial_deposit: 100
+      initial_deposit: 10000
     })
 
 
