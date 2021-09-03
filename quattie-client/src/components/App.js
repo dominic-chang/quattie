@@ -4,7 +4,7 @@ import Transact from './Transact.js';
 import useCookie from '../hooks/useCookie.js';
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
-import { getUserInfo } from '../adapter/User.js';
+import { getWalletInfo } from '../adapter/User.js';
 import { Container } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
@@ -21,7 +21,7 @@ function App() {
   const [ user, setUser ] = useState({})
 
   useEffect(()=>{
-    getUserInfo(jwt).then((user) => {
+    getWalletInfo(jwt).then((user) => {
       setUser(user)
     }).catch((err) => {console.log(err);setUser({});setJwt()})
   }, [jwt])
@@ -43,32 +43,11 @@ function App() {
   }
 
  
-  /*
-  function getUserInfo(jwt) {
-    const url = "http://localhost:8080/wallet"
-    const bearer = `Bearer ${jwt}`
-    const options = {
-      method: 'GET',
-      mode: 'cors',
-      headers:{
-        'authorization': bearer,
-        'Content-Type': 'application/json'
-      },
-    }
-
-    fetch(url, options).then(checkStatus)
-    .then((res) => { return res.json() })
-    .then((json) => {
-      console.log(JSON.stringify(json));
-      setUser(json);
-    })
-  }
-  */
   
   let temp = (
     <Router >
-      <Container style={{ margin: '0px 0px 0px 0px', padding: '0px 0px 0px 0px'}}>
-        <div className="row container-fluid">
+      <Container style={{ margin: '0px 0px 0px 0px', padding: '0rem' }}>
+        <div className="row container-fluid" style={{ padding: '0rem' }}>
           <Navbar user={user}/>        
           <div className="col">
           <Switch>
@@ -76,10 +55,18 @@ function App() {
               <History jwt={jwt}/>
             </Route>
             <Route path="/transact">
-              <Transact user={user} jwt={jwt} onSubmit={(jwt) => getUserInfo(jwt)}/>
+              <Transact 
+                user={user} 
+                jwt={jwt} 
+                onSubmit={
+                  (jwt) => getWalletInfo(jwt)
+                  .then((user) => {setUser(user)})
+                  .catch((err) => {console.log(err);setUser({});setJwt()})
+                }
+              />
             </Route>
             <Route path="/">
-              <History user={user}/>
+              <History jwt={jwt}/>
             </Route>
           </Switch>
           </div>

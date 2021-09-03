@@ -15,7 +15,7 @@ const corsHeaders = {
 
 
 function generateAccessToken(username) {
-    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1s' })// Generate JWT that logs out after 1 hr
+    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' })// Generate JWT that logs out after 1 hr
 }
 
 function authenticateToken(req, res, next) {//middleware for authenticating token
@@ -24,7 +24,7 @@ function authenticateToken(req, res, next) {//middleware for authenticating toke
   if (token == null) return res.sendStatus(401)
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-    console.log(err)
+    console.log("Error: " + err)
 
     if (err) return res.sendStatus(403)
 
@@ -65,7 +65,7 @@ app.post('/signup', (req, res) => {
 
     if (users[username] == null){
         // addd new user
-        users[username] = { password: password, balance: initial_deposit, pending_requests: [], history: [{username:0, amount: parseFloat(initial_deposit), trans_type: 'send'}]}
+        users[username] = { password: password, balance: initial_deposit, pending_requests: [], history: [{username:username, amount: parseFloat(initial_deposit), trans_type: 'deposit'}]}
         console.log("New user added")
         res.send({ message: `New user added. Your username is ${username}, and your balance is ${initial_deposit}`})
     } else {
@@ -131,11 +131,13 @@ app.get('/history', authenticateToken, (req, res) => {
     */
 
     const { username } = req.user
-    console.log(`History request for user ${usernaem}`)
+    console.log(`History request for user ${username}`)
     let current_user = users[username]
     if (users[username] == null){ 
         res.send({ message: 'sender does not exist' })
     } else {
+        let history = current_user['history']
+        console.log(history)
         res.json({history: history})
     }
 })

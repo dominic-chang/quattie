@@ -94,8 +94,8 @@ body {
 .Navbar {
   background-color: var(--bs-gray-800);
   height: 100vh;
-  padding: 70px 20px 20px 20px;
-  margin: auto;
+  padding: 5rem 1rem;
+  margin: 0rem;
 }
 
 .nav-link {
