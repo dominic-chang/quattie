@@ -3,9 +3,9 @@ import { Nav } from 'react-bootstrap';
 import Wallet from './Wallet.js'
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faCoins} from '@fortawesome/free-solid-svg-icons'
+import { faList, faCoins, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 
-export default function Navbar({user}) {
+export default function Navbar({user, onSignout}) {
 
   const historyRef = useRef()
   const resizeIcon = () => {
@@ -14,21 +14,27 @@ export default function Navbar({user}) {
       historyRef.current.style.fontSize = w
     }
   }
+
   return (
-    <div className="col-3 Navbar">
+    <div className="col-3 Navbar" style={{ height:'100vh', display: 'flex', flexDirection:'column', justifyContent:'flex-start', alignItems: 'center'}}>
       <Wallet user={user}/>
-      <Nav activeKey="/">
-        <Nav.Item className="container-fluid" 
-          style={{ padding: '0rem' }}
-        >
+      <Nav activeKey="/" style={{ height:'100%', display:'flex', flexDirection: 'column', justifyContent:'flex-start', alignItems:'center' }}>
+        <Nav.Item>
           <Link className="nav-link" to="/history">
             <FontAwesomeIcon className="nav-icon" icon={faList} />
           </Link>
         </Nav.Item> 
-        <Nav.Item className="container-fluid">
+        <Nav.Item>
           <Link className="nav-link" to="/transact">
             <FontAwesomeIcon className="nav-icon" icon={faCoins} />
             </Link>
+        </Nav.Item> 
+        <Nav.Item
+          style={{ marginTop: 'auto' }}
+        >
+          <Link className="nav-link" to="/" >
+            <FontAwesomeIcon className="nav-icon" icon={faSignOutAlt} onClick={onSignout}/>
+          </Link>
         </Nav.Item> 
       </Nav>
     </div>

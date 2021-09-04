@@ -69,6 +69,11 @@ return fetch(url, options).then((res) => { return res.json() })
 
 }
 
+/**
+ * Signs up a new user to quattie. 
+ * @param {string} username 
+ * @param {string} password 
+ */
 export function signupUser(username, password){
   const data = JSON.stringify({
     username: username,
@@ -88,7 +93,7 @@ export function signupUser(username, password){
     body: data
   }
 
-  fetch(url, options)
+  return fetch(url, options)
 } 
 
 /**

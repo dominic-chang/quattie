@@ -94,7 +94,7 @@ body {
 .Navbar {
   background-color: var(--bs-gray-800);
   height: 100vh;
-  padding: 5rem 1rem;
+  padding: 2rem 0rem;
   margin: 0rem;
 }
 

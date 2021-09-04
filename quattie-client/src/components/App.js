@@ -26,29 +26,11 @@ function App() {
     }).catch((err) => {console.log(err);setUser({});setJwt()})
   }, [jwt])
 
-  /*
-    Check to see if token is valid
-    If valid, render the dashboad else go to login page
-  */
-  function checkStatus(res) {
-    if ( res.ok )  {
-      return res
-    } else {
-      if( res.statusText == "Forbidden"){
-        console.log("Access is forbidden")
-        setJwt()
-      }
-      return res
-    }
-  }
-
- 
-  
   let temp = (
     <Router >
       <Container style={{ margin: '0px 0px 0px 0px', padding: '0rem' }}>
         <div className="row container-fluid" style={{ padding: '0rem' }}>
-          <Navbar user={user}/>        
+          <Navbar user={user} onSignout={()=>setJwt()}/>        
           <div className="col">
           <Switch>
             <Route path="/history">

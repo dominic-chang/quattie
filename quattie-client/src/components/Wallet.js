@@ -7,7 +7,7 @@ export default function Wallet({user}) {
   const { balance, username } = user
 
   return (
-    <Container style={{ marginBottom: '20px', padding: '0px' }}>
+    <Container style={{ marginBottom: '2rem', padding: '0px' }}>
       <div 
         className="profile-pic"
         style={{ 
