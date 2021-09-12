@@ -20,20 +20,20 @@ export default function Navbar({user, onSignout}) {
       <Wallet user={user}/>
       <Nav activeKey="/" style={{ height:'100%', display:'flex', flexDirection: 'column', justifyContent:'flex-start', alignItems:'center' }}>
         <Nav.Item>
-          <Link className="nav-link" to="/history">
+          <Link className="nav-link" to="/history" title="History">
             <FontAwesomeIcon className="nav-icon" icon={faList} />
           </Link>
         </Nav.Item> 
         <Nav.Item>
-          <Link className="nav-link" to="/transact">
+          <Link className="nav-link" to="/transact" title="Transact">
             <FontAwesomeIcon className="nav-icon" icon={faCoins} />
             </Link>
         </Nav.Item> 
         <Nav.Item
           style={{ marginTop: 'auto' }}
         >
-          <Link className="nav-link" to="/" >
-            <FontAwesomeIcon className="nav-icon" icon={faSignOutAlt} onClick={onSignout}/>
+          <Link className="nav-link" to="/" onClick={onSignout} title="Sign out">
+            <FontAwesomeIcon className="nav-icon" icon={faSignOutAlt} />
           </Link>
         </Nav.Item> 
       </Nav>

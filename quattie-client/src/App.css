@@ -102,9 +102,9 @@ body {
   padding: 0px, 0px, 0px, 0px;
 }
 
-.cashBalance {
+.cash-balance {
   width: 100%;
-  font-size: 2rem;
+  font-size: 1rem;
   font-weight: bold;
   font-family: helvetica;
   border-radius: 15% 15% 15% 15%;
@@ -150,6 +150,10 @@ body {
     border-radius: 3rem;
     font-size: 3rem;
   }
+  .cash-balance {
+    font-size: 1.5rem;
+  }
+
   .nav-link {
     padding: 2rem 0;
   }

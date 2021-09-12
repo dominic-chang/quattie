@@ -23,8 +23,8 @@ export default function Wallet({user}) {
         {`${username?.[0]}`}
       </div>
       <br/>
-      <div className="cashBalance" >
-        {`$${balance?.toLocaleString()}`}
+      <div className="cash-balance" >
+        {`${balance?.toLocaleString('en-IN',{ style: 'currency', currency: 'USD'})}`}
       </div>
     </Container>
   )
